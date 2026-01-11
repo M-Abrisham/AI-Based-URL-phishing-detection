@@ -1,12 +1,16 @@
 import pandas as pd
-
+# Split data: AI Training (80%) + Testing (20%)
+from sklearn.model_selection import train_test_split
+# create and train machine learning model for binary prediction
+from sklearn.linear_model import LogisticRegression
+#evaluate the accuracy machine learning model
+from sklearn.metrics import accuracy_score, confusion_matrix  
 
 def translator(Label):
     if Label == "bad":
        return 1
     else:
        return 0
-
 
 
 # 1. Load Dataset
@@ -40,3 +44,25 @@ df['has_suspicious_words'] = df['URL'].apply(check_suspicious)
 # 4. Result
 print(df[['URL','url_length', 'dot_count', 'has_suspicious_words', 'Label']].head())
 print(df[['Label' , 'target']].head())
+
+# 5. AI Train/Test
+
+# define Questions (x) and "Answers" (y)
+x = df[['url_length', 'dot_count', 'has_suspicious_words']] 
+y = df['target']
+
+# dataset Splitter
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+
+print("Training-data dimensions(Rows, Columns):", X_train.shape)
+print("Test-data dimensions(Rows, Columns):", x_test.shape)
+
+#6. 
+scannerAI = LogisticRegression
+scannerAI.fit(x_train, y_train)
+
+# 7.answer x_test question
+y-pred = scannerAI.predict(x_test)
+
+print("Accuracy:", answers_score(y_test, y-pred))
+ 
