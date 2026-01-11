@@ -48,7 +48,7 @@ print(df[['Label' , 'target']].head())
 # 5. AI Train/Test
 
 # define Questions (x) and "Answers" (y)
-x = df[['url_length', 'dot_count', 'has_suspicious_words']] 
+X = df[['url_length', 'dot_count', 'has_suspicious_words']] 
 y = df['target']
 
 # dataset Splitter
@@ -61,7 +61,7 @@ print("Test-data dimensions(Rows, Columns):", X_test.shape)
 scannerAI = LogisticRegression
 scannerAI.fit(X_train, y_train)
 
-# 7.answer x_test question
+# 7.answer X_test question
 y_pred = scannerAI.predict(X_test)
 
 print("Accuracy:", answers_score(y_test, y_pred))
