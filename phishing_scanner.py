@@ -52,17 +52,17 @@ x = df[['url_length', 'dot_count', 'has_suspicious_words']]
 y = df['target']
 
 # dataset Splitter
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 print("Training-data dimensions(Rows, Columns):", X_train.shape)
-print("Test-data dimensions(Rows, Columns):", x_test.shape)
+print("Test-data dimensions(Rows, Columns):", X_test.shape)
 
 #6. 
 scannerAI = LogisticRegression
-scannerAI.fit(x_train, y_train)
+scannerAI.fit(X_train, y_train)
 
 # 7.answer x_test question
-y-pred = scannerAI.predict(x_test)
+y_pred = scannerAI.predict(X_test)
 
-print("Accuracy:", answers_score(y_test, y-pred))
+print("Accuracy:", answers_score(y_test, y_pred))
  
