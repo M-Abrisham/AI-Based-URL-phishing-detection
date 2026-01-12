@@ -28,7 +28,10 @@ df['target'] = df['Label'].apply(translator)
 suspicious_words = ['secure', 'login', 'update', 'banking']
 def check_suspicious(url):
     url_lower = str(url).lower()
-    return 1 if any(word in url_lower for word in suspicious_words) else 0
+    for word in suspicious_words:
+      if word in url_lower:
+        return 1
+    return 0
 
 df['has_suspicious_words'] = df['URL'].apply(check_suspicious)
 
@@ -58,7 +61,11 @@ df['subdomain_count'] = df['URL'].apply(count_subdomains)
 risky_tlds = ['.xyz', '.top', '.pw', '.tk', '.ml', '.ga', '.cf', '.gq', '.buzz', '.club']
 def has_risky_tld(url):
     url_lower = str(url).lower()
-    return 1 if any(url_lower.endswith(tld) or tld + '/' in url_lower for tld in risky_tlds) else 0
+    for tld in risky_tlds:
+      if url_lower.endswith(tld) or tld + '/' in url_lower:
+        return 1
+    return 0
+
 df['risky_tld'] = df['URL'].apply(has_risky_tld)
 
 # check 9: Digit count in URL
@@ -118,7 +125,7 @@ print("\n--- AI Clue Rankings ---")
 for feature, score in zip(X.columns, scannerAI.feature_importances_):
     print(f"{feature}: {score:.4f}")
 
-# user input handling 
+# user input handling (in the future, we will ignore/check bad input)
 test_url = input("Enter Suspicious URL:")
 test_data = pd.DataFrame({
 'url_length': [len(test_url)],
