@@ -1,5 +1,4 @@
 import pandas as pd
-import re
 # Split data: AI Training (80%) + Testing (20%)
 from sklearn.model_selection import train_test_split
 # create and train machine learning model for binary prediction
@@ -41,39 +40,7 @@ def check_suspicious(url):
     return 1 if any(word in url_lower for word in suspicious_words) else 0
 
 df['has_suspicious_words'] = df['URL'].apply(check_suspicious)
-# Feature 4: Special character counts
-df['dash_count'] = df['URL'].apply(lambda x: str(x)c.isdigit'))
-df['at_count'] = df['URL'].apply(lambda x: str(x).count('@'))
-df['slash_count'] = df['URL'].apply(lambda x: str(x).count('/'))
 
-# Feature 5: Has IP address instead of domain
-def has_ip_address(url):
-    ip_pattern = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
-    return 1 if re.search(ip_pattern, str(url)) else 0
-
-df['has_ip'] = df['URL'].apply(has_ip_address)
-
-# Feature 6: HTTPS check
-df['is_https'] = df['URL'].apply(lambda x: 1 if str(x).lower().startswith('https') else 0)
-
-# Feature 7: Subdomain count
-def count_subdomains(url):
-    url = str(url).lower().replace('https://', '').replace('http://', '')
-    domain_part = url.split('/')[0]
-    return domain_part.count('.')
-
-df['subdomain_count'] = df['URL'].apply(count_subdomains)
-
-# Feature 8: Suspicious TLD
-risky_tlds = ['.xyz', '.top', '.pw', '.tk', '.ml', '.ga', '.cf', '.gq', '.buzz', '.club']
-def has_risky_tld(url):
-    url_lower = str(url).lower()
-    return 1 if any(url_lower.endswith(tld) or tld + '/' in url_lower for tld in risky_tlds) else 0
-
-df['risky_tld'] = df['URL'].apply(has_risky_tld)
-
-# Feature 9: Digit count in URL
-df['digit_count'] = df['URL'].apply(lambda x: sum(c.isdigit() for c in str(x)))
 # 4. Result
 print(df[['URL','url_length', 'dot_count', 'has_suspicious_words', 'Label']].head())
 print(df[['Label' , 'target']].head())
@@ -97,4 +64,10 @@ scannerAI.fit(X_train, y_train)
 y_pred = scannerAI.predict(X_test)
 
 print("Overall Model Accuracy:", accuracy_score(y_test, y_pred))
- 
+
+model_errorCount = confusion_matrix(y_test, y_pred)
+print("\n--- Confusion Matrix ---")
+print(f"Correctly Identified Sites: {model_errorCount[0][0]}")
+print(f"Safe Sites Mistaken for Phishing: {model_errorCount[0][1]}")
+print(f"Phishing Sites Missed (DANGER): {model_errorCount[1][0]}")
+print(f"Phishing Sites Caught: {model_errorCount[1][1]}")
