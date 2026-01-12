@@ -79,13 +79,23 @@ X = df[['url_length', 'dot_count', 'has_suspicious_words', 'dash_count', 'at_cou
 y = df['target']
 
 # dataset Splitter
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, 
+    test_size=0.2, 
+    random_state=42,
+    stratify=y
+    )
 
 print("Training-data dimensions(Row, Column):", X_train.shape)
 print("Test-data dimensions(Rows, Columns):", X_test.shape)
 
 #6. 
-scannerAI = RandomForestClassifier()
+scannerAI = RandomForestClassifier(
+    n_estimators=200, 
+    class_weight="balanced", 
+    min_samples_split=5,
+    random_state=42
+    )
 scannerAI.fit(X_train, y_train)
 
 # 7.answer X_test question
