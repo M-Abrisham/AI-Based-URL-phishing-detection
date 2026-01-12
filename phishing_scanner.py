@@ -13,7 +13,7 @@ def translator(Label):
 # Pull Dataset
 print("Loading data... ")
 df = pd.read_csv('training_data/phishing_site_urls.csv')
-print(df.head())
+
 print("\n--- Extracting Features ---")
 
 # check 1: URL Length 
@@ -70,10 +70,6 @@ df['risky_tld'] = df['URL'].apply(has_risky_tld)
 # check 9: Digit count in URL
 df['digit_count'] = df['URL'].apply(lambda x: sum(c.isdigit() for c in str(x)))
 
-# Result
-print(df[['URL','url_length', 'dot_count', 'has_suspicious_words', 'Label']].head())
-print(df[['Label' , 'target']].head())
-
 # AI Train/Test
 # define Questions (x) and "Answers" (y)
 X = df[['url_length', 'dot_count', 'has_suspicious_words', 'dash_count', 'at_count', 'slash_count', 'has_ip', 'is_https', 'subdomain_count', 'risky_tld', 'digit_count']]
@@ -87,9 +83,6 @@ X_train, X_test, y_train, y_test = train_test_split(
     stratify=y
     )
 
-print("Training-data dimensions(Row, Column):", X_train.shape)
-print("Test-data dimensions(Rows, Columns):", X_test.shape)
-
 # initiate model
 scannerAI = RandomForestClassifier(
     n_estimators=200, 
@@ -102,7 +95,7 @@ scannerAI.fit(X_train, y_train)
 # answer X_test question
 y_pred = scannerAI.predict(X_test)
 
-print("Overall Model Accuracy:", accuracy_score(y_test, y_pred))
+print("Overall Model Accuracy:", round(accuracy_score(y_test, y_pred)*100,1), "%")
 
 model_errorCount = confusion_matrix(y_test, y_pred)
 missed_count = model_errorCount[1][0]
@@ -113,16 +106,17 @@ elif missed_count < 1000:
 else:
     risk_label = "CRITICAL DANGER"
 
-print("\n--- Confusion Matrix ---")
-print(f"Safe Sites: {model_errorCount[0][0]}")
-print(f"Mistaken: {model_errorCount[0][1]}")
-print(f"Missing Sites ({risk_label}): {missed_count}")
-print(f"Sites Caught: {model_errorCount[1][1]}")
+# how well the model is working (debug)
+# print("\n--- Confusion Matrix ---")
+# print(f"Safe Sites: {model_errorCount[0][0]}")
+# print(f"Mistaken: {model_errorCount[0][1]}")
+# print(f"Missing Sites ({risk_label}): {missed_count}")
+# print(f"Sites Caught: {model_errorCount[1][1]}")
 
-# what led to current predction results
-print("\n--- AI Clue Rankings ---")
-for feature, score in zip(X.columns, scannerAI.feature_importances_):
-    print(f"{feature}: {score:.4f}")
+# what led to current predction results (debug)
+# print("\n--- AI Clue Rankings ---")
+# for feature, score in zip(X.columns, scannerAI.feature_importances_):
+#     print(f"{feature}: {score:.4f}")
 
 # user input handling (in the future, we will ignore/check bad input)
 test_url = input("Enter Suspicious URL:")
